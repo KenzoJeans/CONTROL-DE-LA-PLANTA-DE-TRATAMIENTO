@@ -53,11 +53,11 @@ Un dato reportado tarde pierde trazabilidad y puede alterar los indicadores del 
 
 > Completar:
 
-- **Aplicación principal:** `[nombre del archivo, p. ej. app.py]`
-- **Instalar dependencias:** `pip install -r requirements.txt`
-- **Ejecutar en local:** `streamlit run [archivo].py`
-- **Despliegue:** Streamlit Cloud, cuenta `[completar]`, URL `[completar]`
-- **Credenciales:** el dashboard necesita acceso de lectura a la hoja de cálculo. Se configuran en los *secrets* de Streamlit Cloud (nunca en el código). Detalle: `[completar dónde está documentado y quién las administra]`
+- **Aplicación principal:** `[app.py]`
+- **Instalar dependencias:** `requirements.txt`
+- **Ejecutar en local:** `streamlit run app.py`
+- **Despliegue:** Streamlit Cloud, cuenta `https://share.streamlit.io/?utm_source=streamlit&utm_medium=referral&utm_campaign=main&utm_content=-ss-streamlit-io-topright`, URL `https://repositorio-ptar-acfvrvtkjansu8ehdx3w5k.streamlit.app/`
+- **Credenciales:** el dashboard necesita acceso de lectura a la hoja de cálculo. Se configuran en los *secrets* de Streamlit Cloud (nunca en el código). Detalle: `[Todas las hojas de cálculo se administran desde el perfil de Gestión Ambiental]`
 
 ## Responsables
 
