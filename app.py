@@ -1244,7 +1244,7 @@ try:
     # ══════════════════════════════════════════
     with t4:
         st.subheader("📦 Gestión de Inventarios y Consumo - Kenzo Jeans")
-        STOCK_INICIAL = {"SULFATO DE ALUMINIO": 119, "CAL": 79, "POLIMERO": 24.118}
+        STOCK_INICIAL = {"SULFATO DE ALUMINIO": 119, "CAL": 79, "POLIMERO": 24.118, "POLICLORURO DE ALUMINIO": 0}
 
         if not df_kardex.empty:
             df_k = df_kardex.copy()
@@ -1273,20 +1273,23 @@ try:
                 else -x['CANTIDAD'], axis=1)
             resumen_inv = df_k.groupby('NOMBRE DEL QUIMICO')['NETO'].sum().to_dict()
 
+            n_quimicos = len(STOCK_INICIAL)
+
             st.markdown("#### 📦 Stock Actual")
-            ck1, ck2, ck3 = st.columns(3)
-            cols_k = [ck1, ck2, ck3]
+            cols_k = st.columns(n_quimicos)
             for i, (prod, stock_ini) in enumerate(STOCK_INICIAL.items()):
                 actual = stock_ini + resumen_inv.get(prod, 0)
                 alerta = "⚠️ REABASTECER" if actual < 20 else "✅ STOCK OK"
-                cols_k[i].metric(prod, f"{actual:.1f} kg", delta=alerta,
-                             delta_color="inverse" if actual < 20 else "normal")
+                cols_k[i].metric(
+                    prod, f"{actual:.1f} kg", delta=alerta,
+                    delta_color="inverse" if actual < 20 else "normal"
+                )
 
             st.markdown("**Nivel de stock relativo:**")
-            col_bars = st.columns(3)
+            col_bars = st.columns(n_quimicos)
             for i, (prod, stock_ini) in enumerate(STOCK_INICIAL.items()):
-                actual  = stock_ini + resumen_inv.get(prod, 0)
-                pct     = min(100, max(0, actual / stock_ini * 100))
+                actual = stock_ini + resumen_inv.get(prod, 0)
+                pct = min(100, max(0, (actual / stock_ini * 100) if stock_ini > 0 else 0))
                 color_s = "#4CAF50" if pct > 40 else ("#FFEB3B" if pct > 20 else "#F44336")
                 with col_bars[i]:
                     st.markdown(f"""
@@ -1304,15 +1307,14 @@ try:
                 df_k_periodo['QUE PROCESO VA A REALIZAR'].astype(str).str.upper() == 'SALIDA']
             consumo_periodo = df_salidas_p.groupby('NOMBRE DEL QUIMICO')['CANTIDAD'].sum().to_dict()
 
-            cs1, cs2, cs3 = st.columns(3)
-            quimicos_obj  = ["SULFATO DE ALUMINIO", "CAL", "POLIMERO"]
-            cols_sal      = [cs1, cs2, cs3]
-
-            for i, q in enumerate(quimicos_obj):
+            cols_sal = st.columns(n_quimicos)
+            for i, q in enumerate(STOCK_INICIAL.keys()):
                 total_sal = consumo_periodo.get(q, 0.0)
-                n_reg_q   = len(df_salidas_p[df_salidas_p['NOMBRE DEL QUIMICO'] == q])
-                cols_sal[i].metric(label=f"Salidas: {q}", value=f"{total_sal:.2f} kg",
-                                   delta=f"{n_reg_q} registros", delta_color="normal")
+                n_reg_q = len(df_salidas_p[df_salidas_p['NOMBRE DEL QUIMICO'] == q])
+                cols_sal[i].metric(
+                    label=f"Salidas: {q}", value=f"{total_sal:.2f} kg",
+                    delta=f"{n_reg_q} registros", delta_color="normal"
+                )
 
             st.markdown("---")
             col_dona, col_tend = st.columns([1, 1.5])
